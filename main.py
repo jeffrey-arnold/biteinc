@@ -1,30 +1,28 @@
 import streamlit as st
 
-# MUST BE THE FIRST STREAMLIT COMMAND IN YOUR SCRIPT
+# Ensure this is the absolute first Streamlit command
 st.set_page_config(page_title="My App", layout="wide")
 
-# Updated CSS targeting modern Streamlit data-testid classes
-hide_streamlit_style = """
+# Modern selector bypass targeting the dynamic hosting wrapper
+st.html(
+    """
     <style>
-    /* Hides the top right toolbar button */
-    div[data-testid="stToolbar"] { visibility: hidden; height: 0%; position: fixed; }
+    /* Completely removes the cloud-hosted viewer watermark badge */
+    div[class^="viewerBadge"], 
+    div[data-testid="stViewerBadge"],
+    .viewerBadge_link__is636 {
+        display: none !important;
+    }
     
-    /* Hides the thin colored accent line at the top */
-    div[data-testid="stDecoration"] { visibility: hidden; height: 0%; position: fixed; }
-    
-    /* Hides the status widget spinner box */
-    div[data-testid="stStatusWidget"] { visibility: hidden; height: 0%; position: fixed; }
-    
-    /* Hides the top menu header and the bottom footer completely */
-    header { visibility: hidden; height: 0%; }
-    footer { visibility: hidden; height: 0%; }
-    
-    /* Hides the viewer badge / GitHub icon if hosted on Community Cloud */
-    .viewerBadge_link__is636, [data-testid="stViewerBadge"] { display: none !important; }
+    /* Extra fail-safe fallback to hide any old footer structures */
+    footer {
+        visibility: hidden !important;
+        height: 0px !important;
+    }
     </style>
-"""
+    """
+)
 
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 4])
 
