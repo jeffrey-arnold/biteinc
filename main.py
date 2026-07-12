@@ -1,29 +1,57 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-# This MUST be the first Streamlit command in your app file
+# 1. Standard configurations
 st.set_page_config(page_title="My App", layout="wide")
 
-# Unified style targeting all layout modifications at once
+# 2. Existing working block for top-right layout and native footers
 st.markdown(
     """
     <style>
-    /* 1. HIDES THE TOP RIGHT TOOLBAR STUFF */
     header { visibility: hidden !important; height: 0px !important; }
     div[data-testid="stToolbar"] { visibility: hidden !important; display: none !important; }
     div[data-testid="stDecoration"] { visibility: hidden !important; display: none !important; }
-    div[data-testid="stStatusWidget"] { visibility: hidden !important; display: none !important; }
-    
-    /* 2. COMPLETELY REMOVES THE WATERMARK BADGE AND FOOTER ELEMENTS */
     footer { visibility: hidden !important; height: 0px !important; }
-    div[data-testid="stViewerBadge"] { display: none !important; visibility: hidden !important; }
-    div[class^="viewerBadge"] { display: none !important; visibility: hidden !important; }
-    .viewerBadge_link__is636 { display: none !important; }
-    
-    /* 3. OPTIONAL: Fixes the gap at the top left by pulling content up */
     .stMainBlockContainer { padding-top: 2rem !important; }
     </style>
     """,
     unsafe_allow_html=True
+)
+
+# 3. Parent DOM JavaScript injection to kill the "Hosted with Streamlit" Badge
+components.html(
+    """
+    <script>
+    function removeViewerBadge() {
+        // Targets parent window elements from within the Streamlit frame
+        const parentDoc = window.parent.document;
+        
+        // Dynamic array matching all potential deployment class signatures
+        const badgeSelectors = [
+            'div[data-testid="stViewerBadge"]',
+            'div[class^="viewerBadge"]',
+            '.viewerBadge_link__is636'
+        ];
+        
+        badgeSelectors.forEach(selector => {
+            const elements = parentDoc.querySelectorAll(selector);
+            elements.forEach(el => {
+                if (el) {
+                    el.style.setProperty('display', 'none', 'important');
+                    el.style.setProperty('visibility', 'hidden', 'important');
+                    el.remove(); // Hard deletes the element from the webpage layout
+                }
+            });
+        });
+    }
+    
+    // Executes repeatedly to ensure the badge stays gone if Streamlit re-renders
+    removeViewerBadge();
+    setInterval(removeViewerBadge, 500);
+    </script>
+    """,
+    height=0,
+    width=0
 )
 
 col1, col2 = st.columns([1, 4])
