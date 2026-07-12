@@ -20,7 +20,7 @@ with col1:
     st.title('Bite Inc')
 
 with col2:
-    st.image("C:\Users\Husain\Desktop\biteinc.jpg.png", width=100)
+    st.image("biteinc.jpg.png", width=100)
 
 st.write('Welcome to the Bite Inc official website, where you can explore our menu, order your delicious food, and more!')
 
