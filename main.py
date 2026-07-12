@@ -1,28 +1,30 @@
 import streamlit as st
 
-# Ensure this is the absolute first Streamlit command
+# This MUST be the first Streamlit command in your app file
 st.set_page_config(page_title="My App", layout="wide")
 
-# Modern selector bypass targeting the dynamic hosting wrapper
-st.html(
+# Unified style targeting all layout modifications at once
+st.markdown(
     """
     <style>
-    /* Completely removes the cloud-hosted viewer watermark badge */
-    div[class^="viewerBadge"], 
-    div[data-testid="stViewerBadge"],
-    .viewerBadge_link__is636 {
-        display: none !important;
-    }
+    /* 1. HIDES THE TOP RIGHT TOOLBAR STUFF */
+    header { visibility: hidden !important; height: 0px !important; }
+    div[data-testid="stToolbar"] { visibility: hidden !important; display: none !important; }
+    div[data-testid="stDecoration"] { visibility: hidden !important; display: none !important; }
+    div[data-testid="stStatusWidget"] { visibility: hidden !important; display: none !important; }
     
-    /* Extra fail-safe fallback to hide any old footer structures */
-    footer {
-        visibility: hidden !important;
-        height: 0px !important;
-    }
+    /* 2. COMPLETELY REMOVES THE WATERMARK BADGE AND FOOTER ELEMENTS */
+    footer { visibility: hidden !important; height: 0px !important; }
+    div[data-testid="stViewerBadge"] { display: none !important; visibility: hidden !important; }
+    div[class^="viewerBadge"] { display: none !important; visibility: hidden !important; }
+    .viewerBadge_link__is636 { display: none !important; }
+    
+    /* 3. OPTIONAL: Fixes the gap at the top left by pulling content up */
+    .stMainBlockContainer { padding-top: 2rem !important; }
     </style>
-    """
+    """,
+    unsafe_allow_html=True
 )
-
 
 col1, col2 = st.columns([1, 4])
 
